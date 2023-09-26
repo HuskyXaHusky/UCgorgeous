@@ -7,40 +7,79 @@ import XCTest
 import UCgorgeousMacros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "GetColor": GetColorMacro.self,
+    "ClassCopy": ClassCopyMacro.self
 ]
 #endif
 
 final class UCgorgeousTests: XCTestCase {
-    func testMacro() throws {
+    func testGetColorMacro() {
         #if canImport(UCgorgeousMacros)
         assertMacroExpansion(
-            """
-            #stringify(a + b)
-            """,
-            expandedSource: """
-            (a + b, "a + b")
-            """,
-            macros: testMacros
+        """
+        @GetColor
+        enum ColorSet {
+            case red
+            case green
+            case blue
+        }
+        """,
+        expandedSource: """
+        enum ColorSet {
+            case red
+            case green
+            case blue
+        
+            var color: Color {
+                switch self {
+                case .red:
+                    return Color("Red")
+                case .green:
+                    return Color("Green")
+                case .blue:
+                    return Color("Blue")
+                }
+            }
+        }
+        """,
+        macros: testMacros
         )
         #else
         throw XCTSkip("macros are only supported when running tests for the host platform")
         #endif
     }
-
-    func testMacroWithStringLiteral() throws {
+    
+    func testClassCopyMacro() {
         #if canImport(UCgorgeousMacros)
         assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
-            macros: testMacros
+        """
+        @ClassCopy
+        final class MainState {
+            var onlineStatus: String? = "online"
+            var chats: [String] = []
+            var chatsDict: [String:String] = [:]
+            }
+        """, expandedSource:
+        """
+        final class MainState {
+            var onlineStatus: String? = "online"
+            var chats: [String] = []
+            var chatsDict: [String:String] = [:]
+        
+            func copy(onlineStatus: String?? = .none, chats: [String]? = .none, chatsDict: [String: String]? = .none) -> MainState {
+                let result = MainState()
+                result.onlineStatus = onlineStatus ?? self.onlineStatus
+                result.chats = chats ?? self.chats
+                result.chatsDict = chatsDict ?? self.chatsDict
+                return result
+                }
+            }
+        """,
+        macros: testMacros
         )
         #else
         throw XCTSkip("macros are only supported when running tests for the host platform")
         #endif
     }
+    
 }

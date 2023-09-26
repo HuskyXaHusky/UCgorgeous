@@ -1,8 +1,16 @@
 import UCgorgeous
+import SwiftUI
 
-let a = 17
-let b = 25
-
-let (result, code) = #stringify(a + b)
-
-print("The value \(result) was produced by the code \"\(code)\"")
+@GetColor
+enum ColorSet {
+    case red
+    case green
+    case blue
+    case megaCustomColorInAsset
+}
+@ClassCopy
+final class MainState {
+    var onlineStatus: String? = "online"
+    var chats: [String] = []
+    var chatsDict: [String:String] = [:]
+}
