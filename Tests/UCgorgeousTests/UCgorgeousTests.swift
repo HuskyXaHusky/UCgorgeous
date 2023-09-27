@@ -113,18 +113,3 @@ final class UCgorgeousTests: XCTestCase {
     }
     
 }
-
-
-//func testMacro() {
-//    #if canImport(UCgorgeousMacros)
-//    assertMacroExpansion(
-//    """
-//    """, expandedSource:
-//    """
-//    """,
-//    macros: testMacros
-//    )
-//    #else
-//    throw XCTSkip("macros are only supported when running tests for the host platform")
-//    #endif
-//}
