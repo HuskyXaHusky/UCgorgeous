@@ -42,6 +42,14 @@ enum ClassInitError: CustomStringConvertible, Error {
         }
     }
 }
+enum StructInitError: CustomStringConvertible, Error {
+    case onlyApplicableToStruct
+    var description: String {
+        switch self {
+        case .onlyApplicableToStruct: return "This macro can only be applied to a Struct."
+        }
+    }
+}
 
 public struct GetColorMacro: MemberMacro {
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
@@ -103,11 +111,44 @@ public struct ClassCopyMacro: MemberMacro {
     }
 }
 
+public struct StructCopyMacro: MemberMacro {
+    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
+                                 in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+        
+       guard let classDeclaration = declaration.as(StructDeclSyntax.self) else {
+           throw StructInitError.onlyApplicableToStruct
+        }
+        let className = classDeclaration.name
+        let membersDeclaration = classDeclaration.memberBlock.members.compactMap{$0.decl.as(VariableDeclSyntax.self)}
+        let varName = membersDeclaration.compactMap { $0.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text }
+        let varType = membersDeclaration.compactMap {
+            $0.bindings.first?.typeAnnotation?.as(TypeAnnotationSyntax.self)}
+        let arr = zip(varName, varType)
+        var ext =
+        """
+        func copy(
+        """
+        for (name, type) in arr {
+            ext += "\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none\(arr.compactMap{$0.0}.last == name ? "" : ", ")"
+        }
+        ext += ") -> \(className){"
+        ext += "\(className)("
+        for name in varName {
+            ext += "\(name): \(name) ?? self.\(name)\(arr.compactMap{$0.0}.last == name ? "" : ", ")"
+        }
+        ext += ")"
+        ext += """
+        }
+    """
+        return [DeclSyntax(stringLiteral: ext)]
+    }
+}
 
 @main
 struct UCgorgeousPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         GetColorMacro.self,
-        ClassCopyMacro.self
+        ClassCopyMacro.self,
+        StructCopyMacro.self
     ]
 }

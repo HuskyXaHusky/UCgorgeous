@@ -14,3 +14,9 @@ final class MainState {
     var chats: [String] = []
     var chatsDict: [String:String] = [:]
 }
+@StructCopy
+struct Settings: Equatable, Hashable {
+    let pinned: [ String ]
+    let customNames: [ String : String ]
+    let id: Int?
+}

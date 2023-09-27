@@ -8,7 +8,8 @@ import UCgorgeousMacros
 
 let testMacros: [String: Macro.Type] = [
     "GetColor": GetColorMacro.self,
-    "ClassCopy": ClassCopyMacro.self
+    "ClassCopy": ClassCopyMacro.self,
+    "StructCopy": StructCopyMacro.self
 ]
 #endif
 
@@ -82,4 +83,48 @@ final class UCgorgeousTests: XCTestCase {
         #endif
     }
     
+    func testStructCopyMacro() {
+        #if canImport(UCgorgeousMacros)
+        assertMacroExpansion(
+        """
+        @StructCopy
+        struct Settings: Equatable, Hashable {
+            let pinned: [ String ]
+            let customNames: [ String : String ]
+            let id: Int?
+        }
+        """, expandedSource:
+        """
+        struct Settings: Equatable, Hashable {
+            let pinned: [ String ]
+            let customNames: [ String : String ]
+            let id: Int?
+        
+            func copy(pinned: [ String ]? = .none, customNames: [ String : String ]? = .none, id: Int?? = .none) -> Settings {
+                Settings(pinned: pinned ?? self.pinned, customNames: customNames ?? self.customNames, id: id ?? self.id)
+            }
+        }
+        """,
+        macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+    
 }
+
+
+//func testMacro() {
+//    #if canImport(UCgorgeousMacros)
+//    assertMacroExpansion(
+//    """
+//    """, expandedSource:
+//    """
+//    """,
+//    macros: testMacros
+//    )
+//    #else
+//    throw XCTSkip("macros are only supported when running tests for the host platform")
+//    #endif
+//}
