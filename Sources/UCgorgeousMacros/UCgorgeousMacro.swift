@@ -90,21 +90,28 @@ public struct ClassCopyMacro: MemberMacro {
         let varName = membersDeclaration.compactMap { $0.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text }
         let varType = membersDeclaration.compactMap {
             $0.bindings.first?.typeAnnotation?.as(TypeAnnotationSyntax.self)}
-        let arr = zip(varName, varType)
+        let arr1 = zip3(membersDeclaration, varName, varType)
+        let arr2 = zip(membersDeclaration,varName)
+        
         var ext =
         """
         func copy(
         """
-        for (name, type) in arr {
-            ext += "\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none\(arr.compactMap{$0.0}.last == name ? "" : ", ")"
+        for (member, name, type) in arr1 {
+            if hasAccessorBlock(member) == false {
+                ext += "\(isFirst(varName, name) ? "" : ", ")\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none"
+            }
         }
         ext += ") -> \(className){"
         ext += "let result = \(className.description.trimmingCharacters(in: .whitespaces))()"
-        for name in varName {
-            ext += "\nresult.\(name) = \(name) ?? self.\(name)"
+        for (member, name) in arr2 {
+            if hasAccessorBlock(member) == false {
+                ext += "\nresult.\(name) = \(name) ?? self.\(name)"
+            }
         }
         ext += """
-            return result
+    
+    return result
         }
     """
         return [DeclSyntax(stringLiteral: ext)]
@@ -123,18 +130,23 @@ public struct StructCopyMacro: MemberMacro {
         let varName = membersDeclaration.compactMap { $0.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text }
         let varType = membersDeclaration.compactMap {
             $0.bindings.first?.typeAnnotation?.as(TypeAnnotationSyntax.self)}
-        let arr = zip(varName, varType)
+        let arr1 = zip3(membersDeclaration, varName, varType)
+        let arr2 = zip(membersDeclaration,varName)
         var ext =
         """
         func copy(
         """
-        for (name, type) in arr {
-            ext += "\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none\(arr.compactMap{$0.0}.last == name ? "" : ", ")"
+        for (member, name, type) in arr1 {
+            if hasAccessorBlock(member) == false {
+                ext += "\(isFirst(varName, name) ? "" : ", ")\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none"
+            }
         }
         ext += ") -> \(className){"
         ext += "\(className)("
-        for name in varName {
-            ext += "\(name): \(name) ?? self.\(name)\(arr.compactMap{$0.0}.last == name ? "" : ", ")"
+        for (member, name) in arr2 {
+            if hasAccessorBlock(member) == false {
+                ext += "\(isFirst(varName, name) ? "" : ", ")\(name): \(name) ?? self.\(name)"
+            }
         }
         ext += ")"
         ext += """
@@ -151,4 +163,24 @@ struct UCgorgeousPlugin: CompilerPlugin {
         ClassCopyMacro.self,
         StructCopyMacro.self
     ]
+}
+
+//Utility
+func zip3<A, B, C>(_ a: A, _ b: B, _ c: C) -> [(A.Element, B.Element, C.Element)] where A: Sequence, B: Sequence, C: Sequence {
+    let zipped = zip(a, zip(b, c))
+    return zipped.reduce(into: []) { result, tuple in
+        let (e1, (e2, e3)) = tuple
+        result.append((e1, e2, e3))
+    }
+}
+
+func hasAccessorBlock(_ variable: VariableDeclSyntax) -> Bool {
+    return variable.bindings.contains { binding in
+        guard binding.accessorBlock != nil else {  return false }
+        return true
+    }
+}
+
+func isFirst(_ elementsArr: [String], _ elementName: String ) -> Bool {
+    elementsArr.first == elementName
 }

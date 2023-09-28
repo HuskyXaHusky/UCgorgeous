@@ -35,6 +35,7 @@ public macro GetColor() = #externalMacro(module: "UCgorgeousMacros", type: "GetC
 /// instance's other values.
 /// This way, you don't have to create a new instance of a `class` and fill out its "fields" if you want to change one or a couple values.
 /// The more values there are in the `class`, the more useful the method provided by the macro will be.
+/// Please note that computed properties are ignored!
 /// For example,
 ///
 ///     @ClassCopy
@@ -42,6 +43,9 @@ public macro GetColor() = #externalMacro(module: "UCgorgeousMacros", type: "GetC
 ///        var onlineStatus: String? = "online"
 ///        var chats: [String] = []
 ///        var chatsDict: [String:String] = [:]
+///        var chatsCount: Int {
+///            return chats.count
+///        }
 ///     }
 /// produce method:
 ///
@@ -67,6 +71,7 @@ public macro ClassCopy() = #externalMacro(module: "UCgorgeousMacros", type: "Cla
 /// other values. 
 /// This way, you don't have to create a new `struct` and fill out its "fields" if you want to change one or a couple values.
 /// The more values there are in the `struct`, the more useful the method provided by the macro will be.
+/// Please note that computed properties are ignored!
 /// For example,
 ///
 ///     @StructCopy
@@ -74,6 +79,9 @@ public macro ClassCopy() = #externalMacro(module: "UCgorgeousMacros", type: "Cla
 ///         let pinned: [ String ]
 ///         let customNames: [ String : String ]
 ///         let id: Int?
+///         var pinsCount: Int {
+///             return pinned.count
+///         }
 ///     }
 ///
 /// produce method:

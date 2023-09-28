@@ -59,6 +59,9 @@ final class UCgorgeousTests: XCTestCase {
             var onlineStatus: String? = "online"
             var chats: [String] = []
             var chatsDict: [String:String] = [:]
+            var chatsCount: Int {
+                return chats.count
+            }
             }
         """, expandedSource:
         """
@@ -66,6 +69,9 @@ final class UCgorgeousTests: XCTestCase {
             var onlineStatus: String? = "online"
             var chats: [String] = []
             var chatsDict: [String:String] = [:]
+            var chatsCount: Int {
+                return chats.count
+            }
         
             func copy(onlineStatus: String?? = .none, chats: [String]? = .none, chatsDict: [String: String]? = .none) -> MainState {
                 let result = MainState()
@@ -92,6 +98,9 @@ final class UCgorgeousTests: XCTestCase {
             let pinned: [ String ]
             let customNames: [ String : String ]
             let id: Int?
+            var pinsCount: Int {
+                return pinned.count
+            }
         }
         """, expandedSource:
         """
@@ -99,6 +108,9 @@ final class UCgorgeousTests: XCTestCase {
             let pinned: [ String ]
             let customNames: [ String : String ]
             let id: Int?
+            var pinsCount: Int {
+                return pinned.count
+            }
         
             func copy(pinned: [ String ]? = .none, customNames: [ String : String ]? = .none, id: Int?? = .none) -> Settings {
                 Settings(pinned: pinned ?? self.pinned, customNames: customNames ?? self.customNames, id: id ?? self.id)
