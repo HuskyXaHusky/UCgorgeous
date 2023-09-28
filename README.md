@@ -1,5 +1,5 @@
 # UCgorgeous v1.01 - alpha
-
+![Static Badge](https://img.shields.io/badge/UC-gorgeous-%233BB143) 
 ## About
 
 A small package aimed at the beauty of the code in your project, which contains the most primitive but useful universal macros that you can easily modify to suit your project.  
