@@ -1,30 +1,9 @@
 import SwiftCompilerPlugin
+import SwiftUI
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import Foundation
-
-/// Implementation of the `stringify` macro, which takes an expression
-/// of any type and produces a tuple containing the value of that expression
-/// and the source code that produced the value. For example
-///
-///     #stringify(x + y)
-///
-///  will expand to
-///
-///     (x + y, "x + y")
-public struct StringifyMacro: ExpressionMacro {
-    public static func expansion(
-        of node: some FreestandingMacroExpansionSyntax,
-        in context: some MacroExpansionContext
-    ) -> ExprSyntax {
-        guard let argument = node.argumentList.first?.expression else {
-            fatalError("compiler bug: the macro does not have any arguments")
-        }
-
-        return "(\(argument), \(literal: argument.description))"
-    }
-}
 
 enum EnumInitError: CustomStringConvertible, Error {
     case onlyApplicableToEnum
@@ -122,11 +101,11 @@ public struct StructCopyMacro: MemberMacro {
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
                                  in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         
-       guard let classDeclaration = declaration.as(StructDeclSyntax.self) else {
+       guard let structDeclaration = declaration.as(StructDeclSyntax.self) else {
            throw StructInitError.onlyApplicableToStruct
         }
-        let className = classDeclaration.name
-        let membersDeclaration = classDeclaration.memberBlock.members.compactMap{$0.decl.as(VariableDeclSyntax.self)}
+        let structName = structDeclaration.name
+        let membersDeclaration = structDeclaration.memberBlock.members.compactMap{$0.decl.as(VariableDeclSyntax.self)}
         let varName = membersDeclaration.compactMap { $0.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text }
         let varType = membersDeclaration.compactMap {
             $0.bindings.first?.typeAnnotation?.as(TypeAnnotationSyntax.self)}
@@ -141,8 +120,8 @@ public struct StructCopyMacro: MemberMacro {
                 ext += "\(isFirst(varName, name) ? "" : ", ")\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none"
             }
         }
-        ext += ") -> \(className){"
-        ext += "\(className)("
+        ext += ") -> \(structName){"
+        ext += "\(structName)("
         for (member, name) in arr2 {
             if hasAccessorBlock(member) == false {
                 ext += "\(isFirst(varName, name) ? "" : ", ")\(name): \(name) ?? self.\(name)"
@@ -166,7 +145,7 @@ struct UCgorgeousPlugin: CompilerPlugin {
 }
 
 //Utility
-func zip3<A, B, C>(_ a: A, _ b: B, _ c: C) -> [(A.Element, B.Element, C.Element)] where A: Sequence, B: Sequence, C: Sequence {
+public func zip3<A, B, C>(_ a: A, _ b: B, _ c: C) -> [(A.Element, B.Element, C.Element)] where A: Sequence, B: Sequence, C: Sequence {
     let zipped = zip(a, zip(b, c))
     return zipped.reduce(into: []) { result, tuple in
         let (e1, (e2, e3)) = tuple
