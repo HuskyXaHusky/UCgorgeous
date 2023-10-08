@@ -1,4 +1,4 @@
-# UCgorgeous v1.00
+# UCgorgeous v1.01
 ![Static Badge](https://img.shields.io/badge/UC-gorgeous-%233BB143) 
 
 # Contents
