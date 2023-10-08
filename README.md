@@ -205,7 +205,7 @@ A macro that adding  method that returns the `color` associated with the `capita
 ```
 
 ## License
-<sup><sub>[origin](#contents)<sup><sub>  
+
 MIT License
 
 <sup><sub>[origin](#contents)
