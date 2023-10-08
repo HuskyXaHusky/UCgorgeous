@@ -71,7 +71,7 @@ public macro GetColor() = #externalMacro(module: "UCgorgeousMacros", type: "GetC
 ///     let state: ComplexEnum = .subState(SubState(onlineStatus: "away", chats: ["foo", "bar"],
 ///         chatsDict: ["foo":"p2p", "bar":"group"]))
 ///
-///     if state.caseName == .subState {
+///     if state.caseName == .colors {
 ///         // Do something
 ///     }
 

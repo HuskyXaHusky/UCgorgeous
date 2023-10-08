@@ -8,6 +8,7 @@
   - [@ClassImplicitCopy](#classimplicitcopy)
   - [@ClassExplicitCopy](#classexplicitcopy)
   - [@GetColor](#getcolor)
+  - [@GetCaseName](#getcasename)
 
 ## About
 
@@ -255,7 +256,7 @@ For example:
      let state: ComplexEnum = .subState( SubState( onlineStatus: "away", chats: [ "foo", "bar" ],
          chatsDict: [ "foo":"p2p", "bar":"group" ] ) )
 
-     if state.caseName == .subState {
+     if state.caseName == .colors {
          // Do something
      }
 ```
