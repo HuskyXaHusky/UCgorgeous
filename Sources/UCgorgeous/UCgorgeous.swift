@@ -77,6 +77,8 @@ public macro ClassImplicitCopy() = #externalMacro(module: "UCgorgeousMacros", ty
 /// Please note that computed properties are ignored!
 /// This is suitable if you want `to explicitly specify values for all properties`.
 /// Keep in mind that for the macro to be used correctly, the `properties must be initialized` properly.
+/// If properties are declared in a class in one order, and in the initializer in another, then the precompiler will throw an error.
+/// To avoid this, you should to initialize the properties in the same order in which they were declared.
 /// For example,
 ///
 ///     @ClassExplicitCopy
