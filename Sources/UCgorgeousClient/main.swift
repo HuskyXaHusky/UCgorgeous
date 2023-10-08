@@ -43,3 +43,11 @@ struct Settings: Equatable, Hashable {
         return pinned.count
     }
 }
+
+@GetCaseName
+enum ComplexEnum {
+    case colors( ColorSet )
+    case main( MainState )
+    case subState( SubState )
+    case settings( Settings )
+}

@@ -57,6 +57,45 @@ public struct GetColorMacro: MemberMacro {
     }
 }
 
+public struct GetCaseNameMacro: MemberMacro {
+    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
+                                 in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+ 
+        guard let enumDeclaration = declaration.as(EnumDeclSyntax.self) else {
+            throw EnumInitError.onlyApplicableToEnum
+        }
+        let members = enumDeclaration.memberBlock.members
+        let caseDeclaration = members.compactMap { $0.decl.as(EnumCaseDeclSyntax.self) }
+        let cases = caseDeclaration.compactMap { $0.elements.first?.name.text }
+        var res =
+        """
+        var caseName: Name {
+            switch self {
+        """
+        
+        for caseName in cases {
+            res += "\ncase .\(caseName): return Name.\(caseName)"
+        }
+        
+        res += """
+            }
+        }
+        enum Name {
+            
+        """
+        
+        for caseName in cases {
+            res += "\(isFirst(cases, caseName) ? "case " : ", ")\(caseName)"
+        }
+        res +=
+        """
+        
+        }
+        """
+        return [DeclSyntax(stringLiteral: res)]
+    }
+}
+
 public struct ClassImplicitCopyMacro: MemberMacro {
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
                                  in context: some MacroExpansionContext) throws -> [DeclSyntax] {
@@ -179,6 +218,7 @@ public struct StructCopyMacro: MemberMacro {
 struct UCgorgeousPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         GetColorMacro.self,
+        GetCaseNameMacro.self,
         ClassImplicitCopyMacro.self,
         ClassExplicitCopyMacro.self,
         StructCopyMacro.self

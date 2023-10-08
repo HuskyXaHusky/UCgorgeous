@@ -8,6 +8,7 @@ import UCgorgeousMacros
 
 let testMacros: [String: Macro.Type] = [
     "GetColor": GetColorMacro.self,
+    "GetCaseName": GetCaseNameMacro.self,
     "ClassImplicitCopy": ClassImplicitCopyMacro.self,
     "ClassExplicitCopy": ClassExplicitCopyMacro.self,
     "StructCopy": StructCopyMacro.self
@@ -41,6 +42,49 @@ final class UCgorgeousTests: XCTestCase {
                 case .blue:
                     return Color("Blue")
                 }
+            }
+        }
+        """,
+        macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+    
+    func testGetCaseNameMacro() {
+        #if canImport(UCgorgeousMacros)
+        assertMacroExpansion(
+        """
+        @GetCaseName
+        enum ComplexEnum {
+            case colors( ColorSet )
+            case main( MainState )
+            case subState( SubState )
+            case settings( Settings )
+        }
+        """,
+        expandedSource: """
+        enum ComplexEnum {
+            case colors( ColorSet )
+            case main( MainState )
+            case subState( SubState )
+            case settings( Settings )
+        
+            var caseName: Name {
+                switch self {
+                case .colors:
+                    return Name.colors
+                case .main:
+                    return Name.main
+                case .subState:
+                    return Name.subState
+                case .settings:
+                    return Name.settings
+                }
+            }
+            enum Name {
+                case colors, main, subState, settings
             }
         }
         """,

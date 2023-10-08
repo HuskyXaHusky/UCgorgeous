@@ -1,4 +1,4 @@
-# UCgorgeous v1.01
+# UCgorgeous v1.02
 ![Static Badge](https://img.shields.io/badge/UC-gorgeous-%233BB143) 
 
 # Contents
@@ -204,6 +204,60 @@ A macro that adding  method that returns the `color` associated with the `capita
 
 ```swift
      Color(ColorSet.megaCustomColorInAsset.color)
+```
+
+---
+## **GetCaseName**
+ 
+A macro that adding  computed property `caseName`and `Name` enumeration within `enum`.  
+`Name` enumeration is used to represent the names of the cases in the `enum`.  
+Overall, macro adds functionality to easily get the name of the current case in the complex  enumeration,  
+each case of which contains other enumerations, complex classes or structures, which is extremely useful  
+in many situations and simply irreplaceable when you need to know which case is currently being used in order to set  
+a condition without unnecessary clarification of the parameters of the object contained in this case.  
+For example:  
+
+```swift
+// Examples of objects designated in enum can be examined in detail in the file - main.swift
+
+     @GetCaseName
+     enum ComplexEnum {
+         case colors( ColorSet )   // enum
+         case main( MainState )    // class
+         case subState( SubState ) // class
+         case settings( Settings ) // struct
+     }
+```
+
+ produce:
+
+```swift
+     var caseName: Name {
+         switch self {
+         case .colors:
+             return Name.colors
+         case .main:
+             return Name.main
+         case .subState:
+             return Name.subState
+         case .settings:
+             return Name.settings
+         }
+     }
+     enum Name {
+         case colors, main, subState, settings
+     }
+```
+
+ Usage:
+
+```swift
+     let state: ComplexEnum = .subState( SubState( onlineStatus: "away", chats: [ "foo", "bar" ],
+         chatsDict: [ "foo":"p2p", "bar":"group" ] ) )
+
+     if state.caseName == .subState {
+         // Do something
+     }
 ```
 
 ## License
