@@ -1,5 +1,14 @@
 # UCgorgeous v1.00
 ![Static Badge](https://img.shields.io/badge/UC-gorgeous-%233BB143) 
+
+# Contents
+- [Documentation](#documentation) 
+- ### Macros:
+  - [@StructCopy](#structcopy)
+  - [@ClassImplicitCopy](#classimplicitcopy)
+  - [@ClassExplicitCopy](#classexplicitcopy)
+  - [@GetColor](#getcolor)
+
 ## About
 
 A small package aimed at the beauty of the code in your project, which contains the most primitive but useful universal macros that you can easily modify to suit your project.  
@@ -30,7 +39,7 @@ UCgorgeous package and select
 Product > Build Documentation
 ``` 
 
-## **StructCopy**
+## **StructCopy**  <sup><sub>[origin](#contents)
  A macro that adding  method `copy` to a `struct`.
 The `copy` method allows creating a new `struct` with customized property values while retaining the original
 other values. 
@@ -66,17 +75,18 @@ produce method:
     let newSetting = oldSettings.copy(id: 120)
 ```
 ---
-## **ClassCopy**
+## **ClassImplicitCopy**  <sup><sub>[origin](#contents)
  A macro that adding  method `copy` to a `class`.
  The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
  instance's other values.
  This way, you don't have to create a new instance of a `class` and fill out its "fields" if you want to change one or a couple values.
  The more values there are in the `class`, the more useful the method provided by the macro will be.
  Please note that computed properties are ignored!
+ This is suitable if you want `to use the current property values if they were not passed as parameters`.  
  For example,
 
 ```swift
-     @ClassCopy
+     @ClassImplicitCopy
      final class MainState {
         var onlineStatus: String? = "online"
         var chats: [String] = []
@@ -107,7 +117,55 @@ produce method:
 ```
 
 ---
-## **GetColor**
+## **ClassExplicitCopy**  <sup><sub>[origin](#contents)
+ A macro that adding  method `copy` to a `class`.
+ The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
+ instance's other values.
+ This way, you don't have to create a new instance of a `class` and fill out its "fields" if you want to change one or a couple values.
+ The more values there are in the `class`, the more useful the method provided by the macro will be.
+ Please note that computed properties are ignored!
+ This is suitable if you want `to explicitly specify values for all properties`.  
+ Keep in mind that for the macro to be used correctly, the `properties must be initialized` properly.  
+ For example,
+
+```swift
+     @ClassExplicitCopy
+     final class SubState {
+        var onlineStatus: String? = "online"
+        var chats: [String] = []
+        var chatsDict: [String:String] = [:]
+        var chatsCount: Int {
+            return chats.count
+        }
+        init(onlineStatus: String? = nil, chats: [String], chatsDict: [String : String]) {
+            self.onlineStatus = onlineStatus
+            self.chats = chats
+            self.chatsDict = chatsDict
+        }
+     }
+```
+
+ produce method:
+
+```swift
+     func copy(onlineStatus: String?? = .none, chats: [String]? = .none, chatsDict: [String: String]? = .none) -> SubState {
+         SubState(
+             onlineStatus: onlineStatus ?? self.onlineStatus,
+             chats: chats ?? self.chats,
+             chatsDict: chatsDict ?? self.chatsDict
+         )
+     }
+```
+
+ Usage:
+
+```swift
+     let oldState = SubState(chats: [], chatsDict: [:])
+     let newState = oldState.copy(onlineStatus: "offline", chats: ["P2PChat", "HolyWarPublicChat"])
+```
+
+---
+## **GetColor**  <sup><sub>[origin](#contents)
 
 A macro that adding  method that returns the `color` associated with the `capitalized` enum `case`.
  When the method is called on an instance of the enum, it returns the corresponding color object.
@@ -143,6 +201,6 @@ A macro that adding  method that returns the `color` associated with the `capita
      Color(ColorSet.megaCustomColorInAsset.color)
 ```
 
-## License
+## License  <sup><sub>[origin](#contents)
 
 MIT License

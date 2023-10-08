@@ -8,7 +8,8 @@ import UCgorgeousMacros
 
 let testMacros: [String: Macro.Type] = [
     "GetColor": GetColorMacro.self,
-    "ClassCopy": ClassCopyMacro.self,
+    "ClassImplicitCopy": ClassImplicitCopyMacro.self,
+    "ClassExplicitCopy": ClassExplicitCopyMacro.self,
     "StructCopy": StructCopyMacro.self
 ]
 #endif
@@ -50,11 +51,11 @@ final class UCgorgeousTests: XCTestCase {
         #endif
     }
     
-    func testClassCopyMacro() {
+    func testClassImplicitCopyMacro() {
         #if canImport(UCgorgeousMacros)
         assertMacroExpansion(
         """
-        @ClassCopy
+        @ClassImplicitCopy
         final class MainState {
             var onlineStatus: String? = "online"
             var chats: [String] = []
@@ -81,6 +82,55 @@ final class UCgorgeousTests: XCTestCase {
                 return result
                 }
             }
+        """,
+        macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+    
+    func testClassExplicitCopyMacro() {
+        #if canImport(UCgorgeousMacros)
+        assertMacroExpansion(
+        """
+        @ClassExplicitCopy
+        final class SubState {
+            var onlineStatus: String? = "online"
+            var chats: [String] = []
+            var chatsDict: [String:String] = [:]
+            var chatsCount: Int {
+                return chats.count
+            }
+            init(onlineStatus: String? = nil, chats: [String], chatsDict: [String : String]) {
+                self.onlineStatus = onlineStatus
+                self.chats = chats
+                self.chatsDict = chatsDict
+            }
+        }
+        """, expandedSource:
+        """
+        final class SubState {
+            var onlineStatus: String? = "online"
+            var chats: [String] = []
+            var chatsDict: [String:String] = [:]
+            var chatsCount: Int {
+                return chats.count
+            }
+            init(onlineStatus: String? = nil, chats: [String], chatsDict: [String : String]) {
+                self.onlineStatus = onlineStatus
+                self.chats = chats
+                self.chatsDict = chatsDict
+            }
+        
+            func copy(onlineStatus: String?? = .none, chats: [String]? = .none, chatsDict: [String: String]? = .none) -> SubState {
+                SubState(
+                    onlineStatus: onlineStatus ?? self.onlineStatus,
+                    chats: chats ?? self.chats,
+                    chatsDict: chatsDict ?? self.chatsDict
+                )
+            }
+        }
         """,
         macros: testMacros
         )

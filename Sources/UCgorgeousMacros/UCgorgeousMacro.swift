@@ -57,7 +57,7 @@ public struct GetColorMacro: MemberMacro {
     }
 }
 
-public struct ClassCopyMacro: MemberMacro {
+public struct ClassImplicitCopyMacro: MemberMacro {
     public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
                                  in context: some MacroExpansionContext) throws -> [DeclSyntax] {
         
@@ -93,6 +93,46 @@ public struct ClassCopyMacro: MemberMacro {
     return result
         }
     """
+        return [DeclSyntax(stringLiteral: ext)]
+    }
+}
+
+public struct ClassExplicitCopyMacro: MemberMacro {
+    public static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax,
+                                 in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+        
+       guard let classDeclaration = declaration.as(ClassDeclSyntax.self) else {
+            throw ClassInitError.onlyApplicableToClass
+        }
+        let className = classDeclaration.name
+        let membersDeclaration = classDeclaration.memberBlock.members.compactMap{$0.decl.as(VariableDeclSyntax.self)}
+        let varName = membersDeclaration.compactMap { $0.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text }
+        let varType = membersDeclaration.compactMap {
+            $0.bindings.first?.typeAnnotation?.as(TypeAnnotationSyntax.self)}
+        let arr1 = zip3(membersDeclaration, varName, varType)
+        let arr2 = zip(membersDeclaration,varName)
+        let filtered = filterByAccessorBlock(arr2)
+        var ext =
+        """
+        func copy(
+        """
+        for (member, name, type) in arr1 {
+            if hasAccessorBlock(member) == false {
+                ext += "\(isFirst(varName, name) ? "" : ", ")\(name)\(type.description.trimmingCharacters(in: .whitespaces) + "?") = .none"
+            }
+        }
+        ext += ") -> \(className){"
+        ext += "\(className.description.trimmingCharacters(in: .whitespaces))("
+        for (member, name) in arr2 {
+            if hasAccessorBlock(member) == false {
+                ext += "\n\(name): \(name) ?? self.\(name)\(isLast(filtered, name) ? "" : ", ")"
+            }
+        }
+        ext += "\n)"
+        ext +=
+        """
+        }
+        """
         return [DeclSyntax(stringLiteral: ext)]
     }
 }
@@ -139,7 +179,8 @@ public struct StructCopyMacro: MemberMacro {
 struct UCgorgeousPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         GetColorMacro.self,
-        ClassCopyMacro.self,
+        ClassImplicitCopyMacro.self,
+        ClassExplicitCopyMacro.self,
         StructCopyMacro.self
     ]
 }
@@ -160,6 +201,19 @@ func hasAccessorBlock(_ variable: VariableDeclSyntax) -> Bool {
     }
 }
 
+func filterByAccessorBlock(_ zip: Zip2Sequence<[VariableDeclSyntax], [String]> ) -> [String] {
+    var arr: [String] = []
+    for (member, name) in zip {
+        if hasAccessorBlock(member) == false {
+            arr.append(name)
+        }
+    }
+    return arr
+}
+
 func isFirst(_ elementsArr: [String], _ elementName: String ) -> Bool {
     elementsArr.first == elementName
+}
+func isLast(_ elementsArr: [String], _ elementName: String ) -> Bool {
+    elementsArr.last == elementName
 }

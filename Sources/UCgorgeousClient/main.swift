@@ -8,7 +8,8 @@ enum ColorSet {
     case blue
     case megaCustomColorInAsset
 }
-@ClassCopy
+
+@ClassImplicitCopy
 final class MainState {
     var onlineStatus: String? = "online"
     var chats: [String] = []
@@ -17,6 +18,22 @@ final class MainState {
         return chats.count
     }
 }
+
+@ClassExplicitCopy
+final class SubState {
+    var onlineStatus: String? = "online"
+    var chats: [String] = []
+    var chatsDict: [String:String] = [:]
+    var chatsCount: Int {
+        return chats.count
+    }
+    init(onlineStatus: String? = nil, chats: [String], chatsDict: [String : String]) {
+        self.onlineStatus = onlineStatus
+        self.chats = chats
+        self.chatsDict = chatsDict
+    }
+}
+
 @StructCopy
 struct Settings: Equatable, Hashable {
     let pinned: [ String ]

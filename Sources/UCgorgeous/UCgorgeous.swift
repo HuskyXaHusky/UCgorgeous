@@ -1,6 +1,7 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+/// `@GetColor`
 /// A macro that adding  method that returns the `color` associated with the `capitalized` enum `case`.
 /// When the method is called on an instance of the enum, it returns the corresponding color object.
 /// This allows for easy access to a set of predefined colors in the application. For example,
@@ -30,15 +31,17 @@
 @attached(member, names: named(color))
 public macro GetColor() = #externalMacro(module: "UCgorgeousMacros", type: "GetColorMacro")
 
+/// `@ClassImplicitCopy`
 /// A macro that adding  method `copy` to a `class`.
 /// The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
 /// instance's other values.
 /// This way, you don't have to create a new instance of a `class` and fill out its "fields" if you want to change one or a couple values.
 /// The more values there are in the `class`, the more useful the method provided by the macro will be.
 /// Please note that computed properties are ignored!
+/// This is suitable if you want `to use the current property values if they were not passed as parameters`.
 /// For example,
 ///
-///     @ClassCopy
+///     @ClassImplicitCopy
 ///     final class MainState {
 ///        var onlineStatus: String? = "online"
 ///        var chats: [String] = []
@@ -63,9 +66,52 @@ public macro GetColor() = #externalMacro(module: "UCgorgeousMacros", type: "GetC
 ///     let newState = oldState.copy(chats: ["MainChat", "P2PChat", "HolyWarPublicChat"])
 ///
 @attached(member, names: arbitrary)
-public macro ClassCopy() = #externalMacro(module: "UCgorgeousMacros", type: "ClassCopyMacro")
+public macro ClassImplicitCopy() = #externalMacro(module: "UCgorgeousMacros", type: "ClassImplicitCopyMacro")
 
+/// `@ClassExplicitCopy`
+/// A macro that adding  method `copy` to a `class`.
+/// The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
+/// instance's other values.
+/// This way, you don't have to create a new instance of a `class` and fill out its "fields" if you want to change one or a couple values.
+/// The more values there are in the `class`, the more useful the method provided by the macro will be.
+/// Please note that computed properties are ignored!
+/// This is suitable if you want `to explicitly specify values for all properties`.
+/// Keep in mind that for the macro to be used correctly, the `properties must be initialized` properly.
+/// For example,
+///
+///     @ClassExplicitCopy
+///     final class SubState {
+///        var onlineStatus: String? = "online"
+///        var chats: [String] = []
+///        var chatsDict: [String:String] = [:]
+///        var chatsCount: Int {
+///            return chats.count
+///        }
+///        init(onlineStatus: String? = nil, chats: [String], chatsDict: [String : String]) {
+///            self.onlineStatus = onlineStatus
+///            self.chats = chats
+///            self.chatsDict = chatsDict
+///        }
+///     }
+/// produce method:
+///
+///     func copy(onlineStatus: String?? = .none, chats: [String]? = .none, chatsDict: [String: String]? = .none) -> SubState {
+///         SubState(
+///             onlineStatus: onlineStatus ?? self.onlineStatus,
+///             chats: chats ?? self.chats,
+///             chatsDict: chatsDict ?? self.chatsDict
+///         )
+///     }
+///
+/// Usage:
+///
+///     let oldState = SubState(chats: [], chatsDict: [:])
+///     let newState = oldState.copy(onlineStatus: "offline", chats: ["P2PChat", "HolyWarPublicChat"])
+///
+@attached(member, names: arbitrary)
+public macro ClassExplicitCopy() = #externalMacro(module: "UCgorgeousMacros", type: "ClassExplicitCopyMacro")
 
+/// `@StructCopy`
 /// A macro that adding  method `copy` to a `struct`.
 /// The `copy` method allows creating a new `struct` with customized property values while retaining the original
 /// other values. 
