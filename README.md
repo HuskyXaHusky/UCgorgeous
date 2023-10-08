@@ -4,10 +4,10 @@
 # Contents
 - [Documentation](#documentation) 
 - ### Macros:
-- [@StructCopy](#structcopy)
-- [@ClassImplicitCopy](#classimplicitcopy)
-- [@ClassExplicitCopy](#classexplicitcopy)
-- [@GetColor](#getcolor)
+- [StructCopy](#structcopy)
+- [ClassImplicitCopy](#classimplicitcopy)
+- [ClassExplicitCopy](#classexplicitcopy)
+- [GetColor](#getcolor)
 
 ## About
 
