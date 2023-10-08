@@ -39,7 +39,7 @@ UCgorgeous package and select
 Product > Build Documentation
 ``` 
 
-## **StructCopy**  <sup><sub>[origin](#contents)
+## **StructCopy**
  A macro that adding  method `copy` to a `struct`.
 The `copy` method allows creating a new `struct` with customized property values while retaining the original
 other values. 
@@ -75,7 +75,7 @@ produce method:
     let newSetting = oldSettings.copy(id: 120)
 ```
 ---
-## **ClassImplicitCopy**  <sup><sub>[origin](#contents)
+## **ClassImplicitCopy**
  A macro that adding  method `copy` to a `class`.
  The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
  instance's other values.
@@ -117,7 +117,7 @@ produce method:
 ```
 
 ---
-## **ClassExplicitCopy**  <sup><sub>[origin](#contents)
+## **ClassExplicitCopy**
  A macro that adding  method `copy` to a `class`.
  The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
  instance's other values.
@@ -165,7 +165,7 @@ produce method:
 ```
 
 ---
-## **GetColor**  <sup><sub>[origin](#contents)
+## **GetColor**
 
 A macro that adding  method that returns the `color` associated with the `capitalized` enum `case`.
  When the method is called on an instance of the enum, it returns the corresponding color object.
@@ -201,6 +201,6 @@ A macro that adding  method that returns the `color` associated with the `capita
      Color(ColorSet.megaCustomColorInAsset.color)
 ```
 
-## License  <sup><sub>[origin](#contents)
+## License
 
 MIT License
