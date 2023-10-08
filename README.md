@@ -40,7 +40,7 @@ Product > Build Documentation
 ``` 
 
 ## **StructCopy**
-<sup><sub>[origin](#contents)  
+<sup><sub>[origin](#contents)<sup><sub>  
  A macro that adding  method `copy` to a `struct`.
 The `copy` method allows creating a new `struct` with customized property values while retaining the original
 other values. 
@@ -77,7 +77,7 @@ produce method:
 ```
 ---
 ## **ClassImplicitCopy**
-<sup><sub>[origin](#contents)  
+<sup><sub>[origin](#contents)<sup><sub>  
  A macro that adding  method `copy` to a `class`.
  The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
  instance's other values.
@@ -120,7 +120,7 @@ produce method:
 
 ---
 ## **ClassExplicitCopy**
-<sup><sub>[origin](#contents)  
+<sup><sub>[origin](#contents)<sup><sub>  
  A macro that adding  method `copy` to a `class`.
  The `copy` method allows creating a new instance of the `class` with customized property values while retaining the original
  instance's other values.
@@ -169,7 +169,7 @@ produce method:
 
 ---
 ## **GetColor**
-<sup><sub>[origin](#contents)  
+<sup><sub>[origin](#contents)<sup><sub>  
 A macro that adding  method that returns the `color` associated with the `capitalized` enum `case`.
  When the method is called on an instance of the enum, it returns the corresponding color object.
  This allows for easy access to a set of predefined colors in the application. For example,
@@ -205,5 +205,5 @@ A macro that adding  method that returns the `color` associated with the `capita
 ```
 
 ## License
-<sup><sub>[origin](#contents)  
+<sup><sub>[origin](#contents)<sup><sub>  
 MIT License
