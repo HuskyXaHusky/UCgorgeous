@@ -4,10 +4,10 @@
 # Contents
 - [Documentation](#documentation) 
 - ### Macros:
-  - [StructCopy](#structcopy)
-  - [ClassImplicitCopy](#classimplicitcopy)
-  - [ClassExplicitCopy](#classexplicitcopy)
-  - [GetColor](#getcolor)
+  - [@StructCopy](#structcopy)
+  - [@ClassImplicitCopy](#classimplicitcopy)
+  - [@ClassExplicitCopy](#classexplicitcopy)
+  - [@GetColor](#getcolor)
 
 ## About
 
@@ -208,4 +208,4 @@ A macro that adding  method that returns the `color` associated with the `capita
 
 MIT License
 
-<sup><sub>[origin](#contents)
+[origin](#contents)
